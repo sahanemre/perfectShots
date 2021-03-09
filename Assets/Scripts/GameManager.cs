@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
 
     public RectTransform nextButton;
     public Ease ease;
+    public RectTransform restartButton;
 
     public LineRenderer lr;
     private float powerBarForce;
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        //levelIndexNo = PlayerPrefs.GetInt("levelIndexNo", levelIndexNo);
+        levelIndexNo = PlayerPrefs.GetInt("levelIndexNo", levelIndexNo);
         LoadLevel(/*levelIndexNo*/);
         audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
@@ -81,6 +82,8 @@ public class GameManager : MonoBehaviour
             DestroyFingerAnim = true;
             GameObject finger = GameObject.Find("FingerAnim");
             Destroy(finger);
+
+            ScoreBoardGO.SetActive(false);
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -115,6 +118,34 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void lrBool(bool isActive)
+    {
+        if (isActive)
+        {
+            lr.enabled = true;
+        }
+        else
+        {
+            lr.enabled = false;
+        }
+    }
+
+    public void restartButtonAnim(bool isActive)
+    {
+        if (isActive)
+        {
+            restartButton
+                .DOAnchorPos(new Vector2(-66, -344), 1)
+                .SetEase(ease);
+        }
+        else
+        {
+            restartButton
+                .DOAnchorPos(new Vector2(66, -344), 1)
+                .SetEase(ease);
+        }
+    }
+
     public void updateCoinScore(int updateCoinAmount)
     {
         totalCoinScore += updateCoinAmount;
@@ -144,6 +175,7 @@ public class GameManager : MonoBehaviour
     {
         PlaySFX(winSound);
         particleSystem.Play();
+        Handheld.Vibrate();
     }
 
     public void playThrowClip()
@@ -203,7 +235,7 @@ public class GameManager : MonoBehaviour
             "Blush",
             "Gonzo",
             "Mac",
-            "Snowflake",
+            "Snowflak",
             "Storm",
             "Hammer",
             "Gentle",
@@ -401,19 +433,31 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void GoRestartLevel()
+    {
+        //restartButtonAnim(false);
+        ballController.AfterRestartCollider();
+
+    }
+
     public void nextButtonAnim()
     {
         nextButton
             .DOAnchorPos(new Vector2(0, -200), 1)
             .SetEase(ease);
+            
 
     }
 
     private void nextButtonAnimReverse()
     {
+        //ScoreBoardGO.SetActive(false);
+        confetiStop();
+
         nextButton
             .DOAnchorPos(new Vector2(0, -637), 0.5f)
             .SetEase(ease);
+            //.OnComplete(() => ScoreBoardGO.SetActive(false));
     }
 
   
@@ -426,9 +470,9 @@ public class GameManager : MonoBehaviour
 
         ScoreBoardPosition();
 
-        yield return new WaitForSeconds(3f);
+        //yield return new WaitForSeconds(3f);
 
-        ScoreBoardGO.SetActive(false);
+        //ScoreBoardGO.SetActive(false);
     }
 
     IEnumerator seco(float sec)

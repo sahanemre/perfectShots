@@ -11,6 +11,8 @@ TagManager:
   - Ball
   - BouncePlatform
   - Coin
+  - OrbitalTransposer
+  - jumpToUp
   layers:
   - Default
   - TransparentFX
